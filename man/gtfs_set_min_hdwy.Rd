@@ -22,7 +22,7 @@ An updated GTFS object.
 Update trips and stop_times with a new set of headways
 }
 \examples{
-new_feed <- edt_set_min_hdwy(feed = feed,
+new_feed <- gtfs_set_min_hdwy(feed = nfta_gtfs,
                              route = "19",
                              service = "1",
                              new_hdwy = 5)

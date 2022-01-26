@@ -3,3 +3,4 @@
 export(gtfs_get_hdwys)
 export(gtfs_set_min_hdwy)
 export(osm_prep_network)
+importFrom(magrittr,"%>%")

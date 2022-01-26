@@ -20,5 +20,5 @@ A tibble of time periods and headways.
 Get a set of headways by time period
 }
 \examples{
-hdwys <- gtfs_get_hdwys(feed = feed, route = "19", service = "1")
+hdwys <- gtfs_get_hdwys(feed = nfta_gtfs, route = "19", service = "1")
 }

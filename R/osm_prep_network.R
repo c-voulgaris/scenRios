@@ -6,30 +6,27 @@
 #' @return
 #' @export
 #'
+#' @importFrom magrittr %>%
+#'
 #' @examples
-#' osm_prep_network(old_file = "existing.osm", new_file = "proposed.osm")
+#' new_osm <- osm_prep_network(old_osm = buffalo_osm)
 
-osm_prep_network <- function(old_file, new_file) {
-  lines <- read_lines(old_file)
+osm_prep_network <- function(old_osm) {
 
-  new_lines <- str_replace(lines,
+  new_lines <- stringr::str_replace(old_osm,
                            "(?<=lon=\".{6,12}\")/",
                            " version = \"1\"/")
 
-  new_lines <- str_replace(new_lines,
+  new_lines <- stringr::str_replace(new_lines,
                            "(?<=lon=\".{6,12}\")>",
                            " version = \"1\">")
 
-  new_lines <- str_replace(new_lines,
+  new_lines <- stringr::str_replace(new_lines,
                            '(?<=way id=\".{6,12}\")>',
                            " version = \"1\">")
 
-  new_lines <- str_replace(new_lines,
+  new_lines <- stringr::str_replace(new_lines,
                            '(?<=relation id=\".{6,12}\")>',
                            " version = \"1\">")
-
-  write_lines(new_lines,
-              file = new_file,
-              append = FALSE)
-
+  new_lines
 }

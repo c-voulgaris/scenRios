@@ -4,7 +4,7 @@
 \alias{osm_prep_network}
 \title{Title}
 \usage{
-osm_prep_network(old_file, new_file)
+osm_prep_network(old_osm)
 }
 \arguments{
 \item{new_file}{}
@@ -16,5 +16,5 @@ osm_prep_network(old_file, new_file)
 Title
 }
 \examples{
-osm_prep_network(old_file = "existing.osm", new_file = "proposed.osm")
+new_osm <- osm_prep_network(old_osm = buffalo_osm)
 }

@@ -5,8 +5,11 @@
 #' @param service A character string with the service ID
 #' @param new_hdwy A number with the new minimum headway
 #' @return An updated GTFS object.
+#'
+#' @importFrom magrittr %>%
+#'
 #' @examples
-#' new_feed <- edt_set_min_hdwy(feed = feed,
+#' new_feed <- gtfs_set_min_hdwy(feed = nfta_gtfs,
 #'                              route = "19",
 #'                              service = "1",
 #'                              new_hdwy = 5)
@@ -22,8 +25,8 @@ gtfs_set_min_hdwy <- function(feed,
   factor <- new_hdwy / min(hdwys$headway)
 
   hdwys <- hdwys %>%
-    mutate(new_hdwy = round(headway * factor)) %>%
-    mutate(n_trips = round((as.numeric(until - from) / 60) / new_hdwy))
+    dplyr::mutate(new_hdwy = round(headway * factor)) %>%
+    dplyr::mutate(n_trips = round((as.numeric(until - from) / 60) / new_hdwy))
 
   # The trips we'll be replacing
   old_trips <- feed$trips[feed$trips$route_id == route &
@@ -42,23 +45,23 @@ gtfs_set_min_hdwy <- function(feed,
     !(feed$stop_times$trip_id %in% old_trips$trip_id),]
 
   # Get the trip ID of the first trip in each direction
-  first_trip_0 <- first(old_trips$trip_id[old_trips$direction_id == 0])
-  first_trip_1 <- first(old_trips$trip_id[old_trips$direction_id == 1])
+  first_trip_0 <- dplyr::first(old_trips$trip_id[old_trips$direction_id == 0])
+  first_trip_1 <- dplyr::first(old_trips$trip_id[old_trips$direction_id == 1])
 
   # Create a new set of trips
-  new_trips <- tibble(route_id = route,
+  new_trips <- tibble::tibble(route_id = route,
                       service_id = service,
                       trip_id = paste(
                         seq(1, sum(hdwys$n_trips)),
                         "edt", sep=""),
                       trip_headsign = c(
                         rep(
-                          first(
+                          dplyr::first(
                             old_trips$trip_headsign[
                               old_trips$direction_id == 0]),
                           times = sum(hdwys$n_trips[hdwys$direction == 0])),
                         rep(
-                          first(
+                          dplyr::first(
                             old_trips$trip_headsign[
                               old_trips$direction_id == 1]),
                           times = sum(hdwys$n_trips[hdwys$direction == 1]))),
@@ -70,12 +73,12 @@ gtfs_set_min_hdwy <- function(feed,
                       block_id = "new",
                       shape_id = c(
                         rep(
-                          first(
+                          dplyr::first(
                             old_trips$shape_id[
                               old_trips$direction_id == 0]),
                           times = sum(hdwys$n_trips[hdwys$direction == 0])),
                         rep(
-                          first(
+                          dplyr::first(
                             old_trips$shape_id[
                               old_trips$direction_id == 1]),
                           times = sum(hdwys$n_trips[hdwys$direction == 1]))))
@@ -83,23 +86,23 @@ gtfs_set_min_hdwy <- function(feed,
   # Set things up to loop through to make new stop times
   new_stop_times_0 <- last_stop_times_0 <-
     old_stop_times[old_stop_times$trip_id == first_trip_0,] %>%
-    mutate(trip_id = new_trips$trip_id[1])
+    dplyr::mutate(trip_id = new_trips$trip_id[1])
 
   new_stop_times_1 <- last_stop_times_1 <-
     old_stop_times[old_stop_times$trip_id == first_trip_1,] %>%
-    mutate(trip_id = new_trips$trip_id[
+    dplyr::mutate(trip_id = new_trips$trip_id[
       1 + sum(hdwys$n_trips[hdwys$direction == 0])])
 
   next_hdwy_0 <- hdwys$new_hdwy[1]
-  next_hdwy_1 <- first(hdwys$new_hdwy[hdwys$direction == 1])
+  next_hdwy_1 <- dplyr::first(hdwys$new_hdwy[hdwys$direction == 1])
 
   for (i in 2:sum(hdwys$n_trips[hdwys$direction == 0])) {
     next_stop_times_0 <- last_stop_times_0 %>%
-      mutate(trip_id = new_trips$trip_id[i]) %>%
-      mutate(arrival_time =
+      dplyr::mutate(trip_id = new_trips$trip_id[i]) %>%
+      dplyr::mutate(arrival_time =
                hms::as_hms(arrival_time +
                              lubridate::dminutes(next_hdwy_0))) %>%
-      mutate(departure_time =
+      dplyr::mutate(departure_time =
                hms::as_hms(departure_time +
                              lubridate::dminutes(next_hdwy_0)))
 
@@ -115,12 +118,12 @@ gtfs_set_min_hdwy <- function(feed,
 
   for (i in 2:sum(hdwys$n_trips[hdwys$direction == 1])) {
     next_stop_times_1 <- last_stop_times_1 %>%
-      mutate(trip_id = new_trips$trip_id[
+      dplyr::mutate(trip_id = new_trips$trip_id[
         i + sum(hdwys$n_trips[hdwys$direction == 0])]) %>%
-      mutate(arrival_time =
+      dplyr::mutate(arrival_time =
                hms::as_hms(arrival_time +
                              lubridate::dminutes(next_hdwy_1))) %>%
-      mutate(departure_time =
+      dplyr::mutate(departure_time =
                hms::as_hms(departure_time +
                              lubridate::dminutes(next_hdwy_1)))
 
