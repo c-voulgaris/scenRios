@@ -14,19 +14,19 @@
 osm_prep_network <- function(old_osm) {
 
   new_lines <- stringr::str_replace(old_osm,
-                           "(?<=lon=\".{6,12}\")/",
+                           "(?<=lon=\".{3,12}\")/",
                            " version = \"1\"/")
 
   new_lines <- stringr::str_replace(new_lines,
-                           "(?<=lon=\".{6,12}\")>",
+                           "(?<=lon=\".{3,12}\")>",
                            " version = \"1\">")
 
   new_lines <- stringr::str_replace(new_lines,
-                           '(?<=way id=\".{6,12}\")>',
+                           '(?<=way id=\".{3,12}\")>',
                            " version = \"1\">")
 
   new_lines <- stringr::str_replace(new_lines,
-                           '(?<=relation id=\".{6,12}\")>',
+                           '(?<=relation id=\".{3,12}\")>',
                            " version = \"1\">")
   new_lines
 }
