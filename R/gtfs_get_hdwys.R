@@ -19,8 +19,8 @@ gtfs_get_hdwys <- function(feed,
                           feed$trips$service_id == service &
                           feed$trips$direction_id == 0,]
 
-  trips_1 <- feed$trips[feed$trips$route_id == "19" &
-                          feed$trips$service_id == "1" &
+  trips_1 <- feed$trips[feed$trips$route_id == route &
+                          feed$trips$service_id == service &
                           feed$trips$direction_id == 1,]
 
   stop_times_0 <- feed$stop_times[feed$stop_times$trip_id %in% trips_0$trip_id &

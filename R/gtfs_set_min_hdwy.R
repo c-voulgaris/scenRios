@@ -51,37 +51,62 @@ gtfs_set_min_hdwy <- function(feed,
   # Create a new set of trips
   new_trips <- tibble::tibble(route_id = route,
                       service_id = service,
-                      trip_id = paste(
-                        seq(1, sum(hdwys$n_trips)),
-                        "edt", sep=""),
-                      trip_headsign = c(
-                        rep(
-                          dplyr::first(
-                            old_trips$trip_headsign[
-                              old_trips$direction_id == 0]),
-                          times = sum(hdwys$n_trips[hdwys$direction == 0])),
-                        rep(
-                          dplyr::first(
-                            old_trips$trip_headsign[
-                              old_trips$direction_id == 1]),
-                          times = sum(hdwys$n_trips[hdwys$direction == 1]))),
-                      direction_id =
-                        c(rep(0, times =
-                                sum(hdwys$n_trips[hdwys$direction == 0])),
-                          rep(1, times =
-                                sum(hdwys$n_trips[hdwys$direction == 1]))),
-                      block_id = "new",
-                      shape_id = c(
-                        rep(
-                          dplyr::first(
-                            old_trips$shape_id[
-                              old_trips$direction_id == 0]),
-                          times = sum(hdwys$n_trips[hdwys$direction == 0])),
-                        rep(
-                          dplyr::first(
-                            old_trips$shape_id[
-                              old_trips$direction_id == 1]),
-                          times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+                      trip_id = paste(seq(1, sum(hdwys$n_trips)),
+                                      "edt", sep=""))
+  if("trip_headsign" %in% colnames(keep_trips)) {
+    new_trips <- new_trips %>%
+      dplyr::mutate(trip_headsign = c(
+        rep(dplyr::first(
+          old_trips$trip_headsign[old_trips$direction_id == 0]),
+          times = sum(hdwys$n_trips[hdwys$direction == 0])),
+        rep(dplyr::first(
+          old_trips$trip_headsign[old_trips$direction_id == 1]),
+          times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+  }
+  if("trip_short_name" %in% colnames(keep_trips)) {
+    new_trips <- new_trips %>%
+      dplyr::mutate(trip_short_name = c(
+        rep(dplyr::first(old_trips$trip_short_name[old_trips$direction_id == 0]),
+            times = sum(hdwys$n_trips[hdwys$direction == 0])),
+        rep(dplyr::first(old_trips$trip_short_name[old_trips$direction_id == 1]),
+            times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+  }
+  new_trips <- new_trips %>%
+    dplyr::mutate(direction_id = c(
+      rep(0, times = sum(hdwys$n_trips[hdwys$direction == 0])),
+      rep(1, times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+  if("block_id" %in% colnames(keep_trips)) {
+    new_trips <- new_trips %>%
+      dplyr::mutate(block_id = "new")
+  }
+  if("shape_id" %in% colnames(keep_trips)) {
+    new_trips <- new_trips %>%
+      dplyr::mutate(shape_id = c(
+        rep(dplyr::first(old_trips$shape_id[old_trips$direction_id == 0]),
+            times = sum(hdwys$n_trips[hdwys$direction == 0])),
+        rep(dplyr::first(old_trips$shape_id[old_trips$direction_id == 1]),
+            times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+  }
+  if("wheelchair_accessible" %in% colnames(keep_trips)) {
+    new_trips <- new_trips %>%
+      dplyr::mutate(wheelchair_accessible = c(
+        rep(dplyr::first(old_trips$wheelchair_accessible[
+          old_trips$direction_id == 0]),
+          times = sum(hdwys$n_trips[hdwys$direction == 0])),
+        rep(dplyr::first(old_trips$wheelchair_accessible[
+          old_trips$direction_id == 1]),
+          times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+  }
+  if("bikes_allowed" %in% colnames(keep_trips)) {
+    new_trips <- new_trips %>%
+      dplyr::mutate(bikes_allowed = c(
+        rep(dplyr::first(old_trips$bikes_allowed[
+          old_trips$direction_id == 0]),
+          times = sum(hdwys$n_trips[hdwys$direction == 0])),
+        rep(dplyr::first(old_trips$bikes_allowed[
+          old_trips$direction_id == 1]),
+          times = sum(hdwys$n_trips[hdwys$direction == 1]))))
+  }
 
   # Set things up to loop through to make new stop times
   new_stop_times_0 <- last_stop_times_0 <-
