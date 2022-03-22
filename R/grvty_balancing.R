@@ -64,7 +64,7 @@ grvty_balancing <- function(od_zones,
                   origin = tidyselect::all_of(zone_o),
                   destin = tidyselect::all_of(zone_d)) %>%
     dplyr::mutate(origin = round(origin),
-                  destin = round(destin))
+                  destin = round(destin)) %>%
     dplyr::select(id, origin, destin)
 
   # get minimum non-zero value for friction factor
