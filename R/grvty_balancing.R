@@ -199,7 +199,7 @@ grvty_balancing <- function(od_zones,
 
   flows <- flows %>%
     dplyr::mutate(flow = round(flow)) %>%
-    dplyr::select(origin, destin, A_factor, B_factor, flow)
+    dplyr::select(o_id, d_id, flow)
 
   list(flows = flows, convergence = balance_check)
 }
