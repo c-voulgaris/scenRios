@@ -41,16 +41,16 @@ grvty_balancing <- function(od_zones,
                             tolerance,
                             max_iter) {
 
-  # od_zones <- buffalo_zones
-  # friction <- buffalo_friction
+  # od_zones <- denver_zones
+  # friction <- denver_friction
   # zone_id <- "GEOID"
-  # zone_o <- "hbo_prod"
-  # zone_d <- "hbo_attr_bal"
+  # zone_o <- "hbw_prod"
+  # zone_d <- "hbw_attr_bal"
   # friction_o_id <- "fromId"
   # friction_d_id <- "toId"
-  # friction_factor <- "F_HBO"
+  # friction_factor <- "F_HBW"
   # tolerance <- 5
-  # max_iter <- 25000
+  # max_iter <- 20000
 
   # rename and select columns
   wip_friction <- friction %>%
@@ -164,7 +164,8 @@ grvty_balancing <- function(od_zones,
       dplyr::group_by(o_id) %>%
       dplyr::mutate(A_factor = 1 / sum(B_factor * destin * friction)) %>%
       dplyr::mutate(flow = A_factor * origin * B_factor * destin * friction) %>%
-      dplyr::ungroup()
+      dplyr::ungroup() %>%
+      dplyr::mutate(flow = ifelse(is.infinite(flow), pmax(origin, destin), flow))
 
     balance_check_o <- flows %>%
       dplyr::group_by(o_id) %>%
