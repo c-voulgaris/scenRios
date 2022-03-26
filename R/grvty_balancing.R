@@ -41,14 +41,14 @@ grvty_balancing <- function(od_zones,
                             tolerance,
                             max_iter) {
 
-  # od_zones <- denver_zones
-  # friction <- denver_friction
+  # od_zones <- salt_lake_zones
+  # friction <- salt_lake_friction
   # zone_id <- "GEOID"
-  # zone_o <- "hbw_prod"
-  # zone_d <- "hbw_attr_bal"
+  # zone_o <- "hbo_prod"
+  # zone_d <- "hbo_attr_bal"
   # friction_o_id <- "fromId"
   # friction_d_id <- "toId"
-  # friction_factor <- "F_HBW"
+  # friction_factor <- "F_HBO"
   # tolerance <- 5
   # max_iter <- 20000
 
@@ -76,10 +76,10 @@ grvty_balancing <- function(od_zones,
     # set all zero friction values equal to the smallest non-zero value
     dplyr::mutate(factor = ifelse(factor == 0, min_factor, factor))
 
-  # scale up so the smallest value is at least 1e-70
-  if (min_factor < 10^-70) {
+  # scale up so all values are greater thean 10^-100
+  if (min_factor < 10^-100) {
     wip_friction <- wip_friction %>%
-      dplyr:: mutate(factor = factor * (10^-70 / min_factor))
+      dplyr:: mutate(factor = factor * (10^-100 / min_factor))
   }
 
   # Add productions and attractions to trip matrix
@@ -172,7 +172,7 @@ grvty_balancing <- function(od_zones,
       dplyr::summarize(target = mean(origin),
                 value = sum(flow)) %>%
       dplyr::mutate(diff = value - target) %>%
-      dplyr::ungroup() %>%
+      dplyr::ungroup()  %>%
       dplyr::summarize(max_o_diff = max(abs(diff)))
 
     balance_check_d <- flows %>%
