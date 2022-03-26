@@ -17,8 +17,8 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' result <- grvty_balancing(od_zones = buffalo_zones,
-#'                           friction = buffalo_friction,
+#' result <- grvty_balancing(od_zones = salt_lake_zones,
+#'                           friction = salt_lake_friction,
 #'                           zone_id = "GEOID",
 #'                           zone_o = "hbo_prod",
 #'                           zone_d = "hbo_attr_bal",
@@ -41,16 +41,16 @@ grvty_balancing <- function(od_zones,
                             tolerance,
                             max_iter) {
 
-  # od_zones <- salt_lake_zones
-  # friction <- salt_lake_friction
-  # zone_id <- "GEOID"
-  # zone_o <- "hbo_prod"
-  # zone_d <- "hbo_attr_bal"
-  # friction_o_id <- "fromId"
-  # friction_d_id <- "toId"
-  # friction_factor <- "F_HBO"
-  # tolerance <- 5
-  # max_iter <- 20000
+# od_zones <- salt_lake_zones
+# friction <- salt_lake_friction
+# zone_id <- "GEOID"
+# zone_o <- "hbo_prod"
+# zone_d <- "hbo_attr_bal"
+# friction_o_id <- "fromId"
+# friction_d_id <- "toId"
+# friction_factor <- "F_HBO"
+# tolerance <- 5
+# max_iter <- 20000
 
   # rename and select columns
   wip_friction <- friction %>%

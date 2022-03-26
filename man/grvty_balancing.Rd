@@ -45,8 +45,8 @@ A list of two data frames, one with the flows and one with convergence data
 Calculate balancing factors for gravity model
 }
 \examples{
-result <- grvty_balancing(od_zones = buffalo_zones,
-                          friction = buffalo_friction,
+result <- grvty_balancing(od_zones = salt_lake_zones,
+                          friction = salt_lake_friction,
                           zone_id = "GEOID",
                           zone_o = "hbo_prod",
                           zone_d = "hbo_attr_bal",
