@@ -41,16 +41,16 @@ grvty_balancing <- function(od_zones,
                             tolerance,
                             max_iter) {
 
-od_zones <- denver_zones
-friction <- denver_friction
-zone_id <- "GEOID"
-zone_o <- "nhb_prod"
-zone_d <- "nhb_attr_bal"
-friction_o_id <- "fromId"
-friction_d_id <- "toId"
-friction_factor <- "F_NHB"
-tolerance <- 0.01
-max_iter <- 100
+# od_zones <- denver_zones
+# friction <- denver_friction
+# zone_id <- "GEOID"
+# zone_o <- "nhb_prod"
+# zone_d <- "nhb_attr_bal"
+# friction_o_id <- "fromId"
+# friction_d_id <- "toId"
+# friction_factor <- "F_NHB"
+# tolerance <- 0.01
+# max_iter <- 100
 
   # rename and select columns
   wip_friction <- friction %>%
