@@ -53,7 +53,7 @@ result <- grvty_balancing(od_zones = salt_lake_zones,
                           friction_o_id = "fromId",
                           friction_d_id = "toId",
                           friction_factor = "F_HBO",
-                          tolerance = 5,
+                          tolerance = 0.01,
                           max_iter = 100000)
 
 

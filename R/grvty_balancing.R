@@ -25,7 +25,7 @@
 #'                           friction_o_id = "fromId",
 #'                           friction_d_id = "toId",
 #'                           friction_factor = "F_HBO",
-#'                           tolerance = 5,
+#'                           tolerance = 0.01,
 #'                           max_iter = 100000)
 #'
 #'
@@ -41,16 +41,16 @@ grvty_balancing <- function(od_zones,
                             tolerance,
                             max_iter) {
 
-# od_zones <- salt_lake_zones
-# friction <- salt_lake_friction
-# zone_id <- "GEOID"
-# zone_o <- "hbo_prod"
-# zone_d <- "hbo_attr_bal"
-# friction_o_id <- "fromId"
-# friction_d_id <- "toId"
-# friction_factor <- "F_HBO"
-# tolerance <- 5
-# max_iter <- 20000
+od_zones <- denver_zones
+friction <- denver_friction
+zone_id <- "GEOID"
+zone_o <- "nhb_prod"
+zone_d <- "nhb_attr_bal"
+friction_o_id <- "fromId"
+friction_d_id <- "toId"
+friction_factor <- "F_NHB"
+tolerance <- 0.01
+max_iter <- 100
 
   # rename and select columns
   wip_friction <- friction %>%
@@ -108,21 +108,23 @@ grvty_balancing <- function(od_zones,
     dplyr::group_by(o_id) %>%
     dplyr::summarize(target = mean(origin),
               value = sum(flow)) %>%
-    dplyr::mutate(diff = value - target) %>%
     dplyr::ungroup() %>%
+    dplyr::mutate(diff = (value - target) / target) %>%
+    tidyr::replace_na(list(diff = 0)) %>%
     dplyr::summarize(max_o_diff = max(abs(diff)))
 
   balance_check_d <- flows %>%
     dplyr::group_by(d_id) %>%
     dplyr::summarize(target = mean(destin),
               value = sum(flow)) %>%
-    dplyr::mutate(diff = value - target) %>%
     dplyr::ungroup() %>%
+    dplyr::mutate(diff = (value - target) / target) %>%
+    tidyr::replace_na(list(diff = 0)) %>%
     dplyr::summarize(max_d_diff = max(abs(diff)))
 
   balance_check <- tibble::tibble(iteration = 1,
-                     max_o_diff = round(balance_check_o$max_o_diff[1]),
-                     max_d_diff = round(balance_check_d$max_d_diff[1]),)
+                     max_o_diff = round(balance_check_o$max_o_diff[1],4),
+                     max_d_diff = round(balance_check_d$max_d_diff[1],4))
 
   # Loop for the rest of the iterations
   done <- FALSE
@@ -137,24 +139,26 @@ grvty_balancing <- function(od_zones,
     balance_check_o <- flows %>%
       dplyr::group_by(o_id) %>%
       dplyr::summarize(target = mean(origin),
-                value = sum(flow)) %>%
-      dplyr::mutate(diff = value - target) %>%
+                       value = sum(flow)) %>%
       dplyr::ungroup() %>%
+      dplyr::mutate(diff = (value - target) / target) %>%
+      tidyr::replace_na(list(diff = 0)) %>%
       dplyr::summarize(max_o_diff = max(abs(diff)))
 
     balance_check_d <- flows %>%
       dplyr::group_by(d_id) %>%
       dplyr::summarize(target = mean(destin),
-                value = sum(flow)) %>%
-      dplyr::mutate(diff = value - target) %>%
+                       value = sum(flow)) %>%
       dplyr::ungroup() %>%
+      dplyr::mutate(diff = (value - target) / target) %>%
+      tidyr::replace_na(list(diff = 0)) %>%
       dplyr::summarize(max_d_diff = max(abs(diff)))
 
     next_balance_check <- tibble::tibble(iteration = i,
-                                 max_o_diff =
-                                   round(balance_check_o$max_o_diff[1]),
-                                 max_d_diff =
-                                   round(balance_check_d$max_d_diff[1]),)
+                                         max_o_diff =
+                                           round(balance_check_o$max_o_diff[1],4),
+                                         max_d_diff =
+                                           round(balance_check_d$max_d_diff[1],4))
 
     balance_check <- rbind(balance_check, next_balance_check)
 
@@ -164,30 +168,31 @@ grvty_balancing <- function(od_zones,
       dplyr::group_by(o_id) %>%
       dplyr::mutate(A_factor = 1 / sum(B_factor * destin * friction)) %>%
       dplyr::mutate(flow = A_factor * origin * B_factor * destin * friction) %>%
-      dplyr::ungroup() %>%
-      dplyr::mutate(flow = ifelse(is.infinite(flow), pmax(origin, destin), flow))
+      dplyr::ungroup()
 
     balance_check_o <- flows %>%
       dplyr::group_by(o_id) %>%
       dplyr::summarize(target = mean(origin),
-                value = sum(flow)) %>%
-      dplyr::mutate(diff = value - target) %>%
-      dplyr::ungroup()  %>%
+                       value = sum(flow)) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(diff = (value - target) / target) %>%
+      tidyr::replace_na(list(diff = 0)) %>%
       dplyr::summarize(max_o_diff = max(abs(diff)))
 
     balance_check_d <- flows %>%
       dplyr::group_by(d_id) %>%
       dplyr::summarize(target = mean(destin),
-                value = sum(flow)) %>%
-      dplyr::mutate(diff = value - target) %>%
+                       value = sum(flow)) %>%
       dplyr::ungroup() %>%
+      dplyr::mutate(diff = (value - target) / target) %>%
+      tidyr::replace_na(list(diff = 0)) %>%
       dplyr::summarize(max_d_diff = max(abs(diff)))
 
     next_balance_check <- tibble::tibble(iteration = i,
-                                 max_o_diff =
-                                   round(balance_check_o$max_o_diff[1]),
-                                 max_d_diff =
-                                   round(balance_check_d$max_d_diff[1]),)
+                                         max_o_diff =
+                                           round(balance_check_o$max_o_diff[1],4),
+                                         max_d_diff =
+                                           round(balance_check_d$max_d_diff[1],4))
 
     balance_check <- rbind(balance_check, next_balance_check)
 
