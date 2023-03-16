@@ -42,16 +42,16 @@ grvty_balancing <- function(od_zones,
                             max_iter) {
 
   # for quick tests
-# od_zones <- buffalo_trip_gen
-# friction <- buffalo_friction
-# zone_id <- "GEOID"
-# zone_o <- "hbo_trip_prod"
-# zone_d <- "hbo_bal_attr"
-# friction_o_id <- "from_GEOID"
-# friction_d_id <- "to_GEOID"
-# friction_factor <- "F_HBO"
-# tolerance <- 0.01
-# max_iter <- 100
+od_zones <- trip_gen
+friction <- skim
+zone_id <- "GEOID"
+zone_o <- "hbo_trip_prod"
+zone_d <- "hbo_bal_attr"
+friction_o_id <- "from_GEOID"
+friction_d_id <- "to_GEOID"
+friction_factor <- "F_HBO"
+tolerance <- 0.01
+max_iter <- 100
 
   # rename and select columns
   wip_friction <- friction |>
@@ -64,8 +64,8 @@ grvty_balancing <- function(od_zones,
     dplyr::rename(id = tidyselect::all_of(zone_id),
                   origin = tidyselect::all_of(zone_o),
                   destin = tidyselect::all_of(zone_d)) |>
-    dplyr::mutate(origin = round(origin),
-                  destin = round(destin)) |>
+    dplyr::mutate(origin = origin,
+                  destin = destin) |>
     dplyr::select(id, origin, destin)
 
   # get minimum non-zero value for friction factor
