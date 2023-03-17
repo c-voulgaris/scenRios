@@ -42,16 +42,16 @@ grvty_balancing <- function(od_zones,
                             max_iter) {
 
   # for quick tests
-od_zones <- trip_gen
-friction <- skim
-zone_id <- "GEOID"
-zone_o <- "hbo_trip_prod"
-zone_d <- "hbo_bal_attr"
-friction_o_id <- "from_GEOID"
-friction_d_id <- "to_GEOID"
-friction_factor <- "F_HBO"
-tolerance <- 0.01
-max_iter <- 100
+# od_zones <- trip_gen
+# friction <- skim
+# zone_id <- "GEOID"
+# zone_o <- "hbo_trip_prod"
+# zone_d <- "hbo_bal_attr"
+# friction_o_id <- "from_GEOID"
+# friction_d_id <- "to_GEOID"
+# friction_factor <- "F_HBO"
+# tolerance <- 0.01
+# max_iter <- 100
 
   # rename and select columns
   wip_friction <- friction |>
